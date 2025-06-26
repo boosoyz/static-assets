@@ -1,6 +1,6 @@
 // 插入播放器样式
 const style = document.createElement('style');
-style.textContent = `
+style。textContent = `
 #music-player {
   position: fixed;
   top: 30px;
