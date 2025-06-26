@@ -13,11 +13,12 @@ style.textContent = `
   padding: 6px 14px;
   font-family: sans-serif;
   border-radius: 8px;
-  backdrop-filter: blur(6px);
-  /* 背景透明，取消背景色 */
+  backdrop-filter: none;
   background: transparent;
-  color: var(--music-player-color, #fff);
-  user-select: none;
+  color: #111;
+}
+.dark #music-player {
+  color: #fff;
 }
 #music-player button {
   background: transparent;
@@ -47,15 +48,6 @@ style.textContent = `
   text-overflow: ellipsis;
   white-space: nowrap;
   user-select: none;
-  color: inherit;
-}
-/* 亮色主题文字 */
-html.light #music-player {
-  --music-player-color: #222;
-}
-/* 暗色主题文字 */
-html.dark #music-player {
-  --music-player-color: #fff;
 }
 `;
 document.head.appendChild(style);
@@ -82,7 +74,7 @@ player.innerHTML = `
 `;
 document.body.appendChild(player);
 
-// ===== 歌单示例，换成你的100+首歌即可 =====
+// ===== 播放器逻辑 =====
 const songs = [
   {
     "title": "说好的幸福呢 - 周杰伦",
@@ -126,29 +118,25 @@ const songs = [
   }
 ];
 
-// 当前歌曲索引
 let currentSongIndex = Math.floor(Math.random() * songs.length);
 let audio = null;
 let isPlaying = false;
 let hasInteracted = false;
 
-// 更新播放按钮状态
 function updateButtons() {
   document.getElementById('play-icon').style.display = isPlaying ? 'none' : 'block';
   document.getElementById('pause-icon').style.display = isPlaying ? 'block' : 'none';
   document.getElementById('play-pause').title = isPlaying ? '暂停' : '播放';
 }
 
-// 更新歌曲信息
 function updateSongInfo() {
   document.getElementById('song-info').textContent = songs[currentSongIndex]?.title || '未知音轨';
 }
 
-// 初始化音频对象
 function initAudio() {
   if (audio) return;
   audio = new Audio();
-  audio.preload = 'none'; // 关闭预加载，节省资源
+  audio.preload = 'auto';
   audio.addEventListener('ended', playNext);
   audio.addEventListener('play', () => {
     isPlaying = true;
@@ -160,13 +148,10 @@ function initAudio() {
   });
 }
 
-// 加载并播放当前歌曲
 async function loadAndPlay(autoplay = true) {
   try {
     initAudio();
-    if (audio.src !== songs[currentSongIndex].src) {
-      audio.src = songs[currentSongIndex].src;
-    }
+    audio.src = songs[currentSongIndex].src;
     updateSongInfo();
     if (autoplay) await audio.play();
   } catch (e) {
@@ -177,7 +162,6 @@ async function loadAndPlay(autoplay = true) {
   }
 }
 
-// 播放下一首
 function playNext() {
   let nextIndex;
   do {
@@ -187,7 +171,6 @@ function playNext() {
   loadAndPlay(true);
 }
 
-// 播放上一首
 function playPrev() {
   let prevIndex;
   do {
@@ -197,13 +180,11 @@ function playPrev() {
   loadAndPlay(true);
 }
 
-// 切换播放/暂停
 function togglePlay() {
   if (!audio) return;
   audio.paused ? audio.play() : audio.pause();
 }
 
-// 第一次用户交互开始播放
 function onFirstUserInteraction() {
   if (hasInteracted) return;
   hasInteracted = true;
@@ -212,7 +193,7 @@ function onFirstUserInteraction() {
   loadAndPlay(true);
 }
 
-// 绑定事件
+// ===== 用户交互事件绑定 =====
 window.addEventListener('click', onFirstUserInteraction, { once: true });
 window.addEventListener('keydown', onFirstUserInteraction, { once: true });
 
