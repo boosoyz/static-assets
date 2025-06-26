@@ -1,4 +1,4 @@
-// ===== 插入播放器样式（根据主题自动切换颜色） =====
+// ===== 插入播放器样式 =====
 const style = document.createElement('style');
 style.textContent = `
 #music-player {
@@ -13,12 +13,11 @@ style.textContent = `
   padding: 6px 14px;
   font-family: sans-serif;
   border-radius: 8px;
-  backdrop-filter: blur(6px);
-  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: none;
+  background: transparent;
   color: #111;
 }
 .dark #music-player {
-  background: rgba(0, 0, 0, 0.4);
   color: #fff;
 }
 #music-player button {
